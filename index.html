@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bp. Emanuel | Estudos Bíblicos & Bíblia Sagrada Online</title>
+  <meta name="description" content="Portal de Estudos Bíblicos, Teologia Sistemática e Leitor da Bíblia Sagrada Online com comentários, anotações, planos de leitura e áudio do Bispo Emanuel.">
+  <meta name="theme-color" content="#0b0f17">
+  
+  <!-- Favicon e Ícones -->
+  <link rel="icon" type="image/jpeg" href="assets/emblem.jpg">
+
+  <!-- Estilos e Temas -->
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-theme="dark">
+
+  <!-- ==========================================================================
+       CABECALHO & NAVEGACAO SUPERIOR
+       ========================================================================== -->
+  <header class="site-header">
+    <div class="nav-container">
+      <div class="brand-wrapper" data-route="home">
+        <img src="assets/emblem.jpg" alt="Emblema Bp. Emanuel" class="brand-emblem" id="brand-emblem-img">
+        <div class="brand-text">
+          <h1>Bp. Emanuel</h1>
+          <span class="brand-subtitle">Estudos Bíblicos & Teologia</span>
+        </div>
+      </div>
+
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <button class="nav-item-btn active" data-route="home">
+              <span class="nav-icon">🏛️</span> Início
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" data-route="bible">
+              <span class="nav-icon">📖</span> Bíblia Sagrada
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" data-route="studies">
+              <span class="nav-icon">📜</span> Estudos Bíblicos
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" data-route="plans">
+              <span class="nav-icon">📅</span> Planos de Leitura
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" data-route="notes">
+              <span class="nav-icon">🔖</span> Anotações
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" data-route="lexicon">
+              <span class="nav-icon">📚</span> Dicionário
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Música Sacra Ambiente -->
+        <button class="icon-btn ambient-btn" id="ambient-audio-toggle" title="Ativar música suave de oração e meditação">
+          🕊️
+        </button>
+
+        <!-- Seletor Rápido de Livros (Ctrl + K) -->
+        <button class="icon-btn" onclick="openBookSelectorModal()" title="Localizar Livro ou Capítulo (Ctrl + K)">
+          🔍
+        </button>
+
+        <!-- Menu de Temas (Nobre Escuro, Papel Sépia, Claro Minimalista) -->
+        <div class="theme-dropdown">
+          <button class="icon-btn" onclick="themeManager.toggleDropdown()" title="Alterar Tema Visual">
+            <span id="current-theme-icon">🌙</span>
+          </button>
+          <div class="theme-menu" id="theme-dropdown-menu">
+            <button class="theme-option active" data-theme="dark" onclick="themeManager.applyTheme('dark')">
+              <span>🌙</span> Nobre Escuro
+            </button>
+            <button class="theme-option" data-theme="sepia" onclick="themeManager.applyTheme('sepia')">
+              <span>📜</span> Papel Sépia Bíblico
+            </button>
+            <button class="theme-option" data-theme="light" onclick="themeManager.applyTheme('light')">
+              <span>☀️</span> Claro Minimalista
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       CONTEÚDO PRINCIPAL (SPA VIEWS)
+       ========================================================================== -->
+  <main class="main-content">
+
+    <!-- VIEW 1: INÍCIO / DASHBOARD -->
+    <section class="view-section active" id="view-home">
+      <!-- Hero Card com Iluminação Dourada -->
+      <div class="hero-card">
+        <div class="hero-background-art"></div>
+        <div class="hero-content">
+          <span class="hero-badge">Plataforma Teológica Oficial</span>
+          <h2 class="hero-title">
+            Mergulhe na <span class="gold-gradient-text">Profundidade</span> da Palavra de Deus
+          </h2>
+          <p class="hero-description">
+            Estudos exegéticos, reflexões teológicas e leitura imersiva das Sagradas Escrituras com anotações personalizadas, planos de leitura e recursos ministeriais.
+          </p>
+          <div class="hero-actions">
+            <button class="btn-primary" onclick="appRouter.navigateTo('bible')">
+              <span>📖</span> Abrir Bíblia Sagrada
+            </button>
+            <button class="btn-secondary" onclick="appRouter.navigateTo('studies')">
+              <span>📜</span> Explorar Estudos Bíblicos
+            </button>
+          </div>
+        </div>
+
+        <!-- Card do Versículo do Dia -->
+        <div class="daily-verse-wrapper">
+          <div class="daily-verse-box">
+            <div class="verse-tag">
+              <span>✨</span> Versículo do Dia
+            </div>
+            <p class="verse-quote-text" id="daily-verse-text">
+              "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."
+            </p>
+            <span class="verse-reference" id="daily-verse-ref">— João 3:16 (ARC) —</span>
+            <div class="verse-actions-bar">
+              <button class="verse-action-btn" id="daily-verse-copy-btn">
+                📋 Copiar
+              </button>
+              <button class="verse-action-btn" id="daily-verse-context-btn">
+                📖 Ler no Contexto
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prateleira de Acesso Rápido aos Livros Bíblicos -->
+      <div class="testament-shelf">
+        <div class="section-header-row">
+          <div>
+            <h3 class="section-title">Antigo Testamento</h3>
+            <p class="section-subtitle">A Lei, os Profetas, os Livros Históricos e Poéticos</p>
+          </div>
+          <button class="btn-secondary" onclick="openBookSelectorModal()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            Ver Todos os 39 Livros
+          </button>
+        </div>
+        <div class="books-pill-grid" id="home-at-books-grid">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+
+      <div class="testament-shelf">
+        <div class="section-header-row">
+          <div>
+            <h3 class="section-title">Novo Testamento</h3>
+            <p class="section-subtitle">Os Evangelhos, Atos dos Apóstolos, Epístolas e Apocalipse</p>
+          </div>
+          <button class="btn-secondary" onclick="openBookSelectorModal()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            Ver Todos os 27 Livros
+          </button>
+        </div>
+        <div class="books-pill-grid" id="home-nt-books-grid">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: LEITOR DA BÍBLIA SAGRADA -->
+    <section class="view-section" id="view-bible">
+      <div class="reader-wrapper">
+        
+        <!-- Barra Superior de Controle do Leitor -->
+        <div class="reader-toolbar">
+          <div class="selector-group">
+            <button class="reader-select-btn" onclick="openBookSelectorModal()">
+              <span>📖</span>
+              <span id="book-selector-btn-text">Salmos 23</span>
+              <span style="font-size: 0.8rem;">▼</span>
+            </button>
+            <button class="icon-btn" onclick="bibleReader.previousChapter()" title="Capítulo Anterior (Seta Esquerda)">
+              ◀
+            </button>
+            <button class="icon-btn" onclick="bibleReader.nextChapter()" title="Próximo Capítulo (Seta Direita)">
+              ▶
+            </button>
+          </div>
+
+          <div class="reader-settings-group">
+            <button class="play-chapter-btn" id="play-chapter-audio-btn" onclick="bibleReader.narrateFullChapter()">
+              <span>🔊</span> Ouvir Capítulo
+            </button>
+
+            <div class="font-size-adjust" title="Tamanho do Texto">
+              <button class="font-size-btn" onclick="bibleReader.adjustFontSize(-2)">A-</button>
+              <span id="current-font-size-label" style="font-size: 0.75rem; padding: 0 4px; color: var(--text-muted);">19px</span>
+              <button class="font-size-btn" onclick="bibleReader.adjustFontSize(2)">A+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seletor Horizontal de Capítulos -->
+        <div class="chapter-pills-bar" id="chapter-pills-bar">
+          <!-- Gerado dinamicamente -->
+        </div>
+
+        <!-- Folha de Leitura Sagrada -->
+        <article class="reading-sheet">
+          <header class="sheet-header">
+            <span class="sheet-chapter-badge" id="reader-chap-badge">Capítulo 23</span>
+            <h2 class="sheet-book-title" id="reader-book-title">Salmos</h2>
+            <div class="sheet-translation-tag">Versão Almeida Revista e Corrigida (ARC)</div>
+          </header>
+
+          <div class="verses-container" id="verses-list-container">
+            <!-- Versículos renderizados dinamicamente -->
+          </div>
+
+          <!-- Rodapé de Navegação do Capítulo -->
+          <footer class="sheet-footer-nav">
+            <button class="nav-chapter-btn" onclick="bibleReader.previousChapter()">
+              ← Capítulo Anterior
+            </button>
+            <button class="btn-primary" onclick="openBookSelectorModal()">
+              Ir para Outro Livro
+            </button>
+            <button class="nav-chapter-btn" onclick="bibleReader.nextChapter()">
+              Próximo Capítulo →
+            </button>
+          </footer>
+        </article>
+      </div>
+
+      <!-- Barra Flutuante de Ações do Versículo Selecionado -->
+      <div class="floating-verse-toolbar" id="floating-verse-toolbar">
+        <span class="selected-verse-badge" id="toolbar-verse-label">Sl 23:1</span>
+        
+        <!-- Cores de Destaque -->
+        <div class="highlight-color-picker">
+          <button class="color-dot-btn dot-yellow" onclick="bibleReader.setHighlight('yellow')" title="Destacar Amarelo"></button>
+          <button class="color-dot-btn dot-green" onclick="bibleReader.setHighlight('green')" title="Destacar Verde"></button>
+          <button class="color-dot-btn dot-blue" onclick="bibleReader.setHighlight('blue')" title="Destacar Azul"></button>
+          <button class="color-dot-btn dot-pink" onclick="bibleReader.setHighlight('pink')" title="Destacar Rosa"></button>
+          <button class="color-dot-btn dot-clear" onclick="bibleReader.setHighlight('clear')" title="Remover Destaque">✕</button>
+        </div>
+
+        <!-- Ações Adicionais -->
+        <button class="toolbar-action-btn" onclick="bibleReader.openNoteModal()">
+          <span>📝</span> Anotar
+        </button>
+        <button class="toolbar-action-btn" onclick="bibleReader.toggleFavoriteCurrent()">
+          <span>⭐</span> Favoritar
+        </button>
+        <button class="toolbar-action-btn" onclick="bibleReader.copyCurrentVerse()">
+          <span>📋</span> Copiar
+        </button>
+        <button class="toolbar-action-btn" onclick="bibleReader.narrateCurrentVerse()">
+          <span>🔊</span> Narrar
+        </button>
+        <button class="toolbar-action-btn" onclick="bibleReader.openVerseCardGenerator()">
+          <span>🖼️</span> Gerar Cartão
+        </button>
+      </div>
+    </section>
+
+    <!-- VIEW 3: PORTAL DE ESTUDOS BÍBLICOS -->
+    <section class="view-section" id="view-studies">
+      <div class="section-header-row">
+        <div>
+          <h2 class="section-title">Estudos Bíblicos & Teologia</h2>
+          <p class="section-subtitle">Exegese, doutrinas fundamentais e reflexões pastorais para edificação</p>
+        </div>
+        <button class="btn-primary" onclick="openModal('new-study-modal')">
+          <span>✍️</span> + Novo Estudo
+        </button>
+      </div>
+
+      <!-- Filtros por Categoria -->
+      <div class="studies-controls-bar">
+        <div class="categories-tags-row">
+          <button class="category-filter-btn active" onclick="filterStudiesByCategory('all', this)">Todos</button>
+          <button class="category-filter-btn" onclick="filterStudiesByCategory('Teologia Sistemática', this)">Teologia Sistemática</button>
+          <button class="category-filter-btn" onclick="filterStudiesByCategory('Vida Cristã', this)">Vida Cristã & Discipulado</button>
+          <button class="category-filter-btn" onclick="filterStudiesByCategory('Oração', this)">Oração & Jejum</button>
+          <button class="category-filter-btn" onclick="filterStudiesByCategory('Parábolas', this)">Parábolas & Evangelhos</button>
+          <button class="category-filter-btn" onclick="filterStudiesByCategory('Escatologia', this)">Escatologia</button>
+          <button class="category-filter-btn" onclick="filterStudiesByCategory('Liderança', this)">Liderança Pastoral</button>
+        </div>
+      </div>
+
+      <!-- Grid de Estudos -->
+      <div class="studies-grid" id="studies-cards-grid">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </section>
+
+    <!-- VIEW 4: LEITOR DO ESTUDO INDIVIDUAL -->
+    <section class="view-section" id="view-study-view">
+      <!-- Renderizado dinamicamente via JS ao abrir estudo -->
+    </section>
+
+    <!-- VIEW 5: PLANOS DE LEITURA BÍBLICA -->
+    <section class="view-section" id="view-plans">
+      <div class="plans-container">
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-title">Planos de Leitura da Bíblia</h2>
+            <p class="section-subtitle">Metas diárias estruturadas para nutrir sua vida espiritual com consistência</p>
+          </div>
+        </div>
+
+        <div id="plans-view-container">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 6: ANOTAÇÕES E FAVORITOS -->
+    <section class="view-section" id="view-notes">
+      <div class="notes-container">
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-title">Minhas Anotações & Destaques</h2>
+            <p class="section-subtitle">Todos os versículos anotados e iluminados durante o seu devocional</p>
+          </div>
+        </div>
+
+        <div class="notes-grid" id="notes-grid-container">
+          <!-- Renderizado dinamicamente via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: DICIONÁRIO TEOLÓGICO -->
+    <section class="view-section" id="view-lexicon">
+      <div class="lexicon-container">
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-title">Dicionário & Léxico Teológico</h2>
+            <p class="section-subtitle">Significados etimológicos em Hebraico e Grego dos termos sagrados</p>
+          </div>
+        </div>
+
+        <div class="search-input-wrapper">
+          <span class="search-icon-inside">🔍</span>
+          <input type="text" class="search-input" id="lexicon-search-input" 
+            placeholder="Pesquisar termo teológico (ex: Graça, Justificação, Propiciação...)" 
+            oninput="renderLexiconView()">
+        </div>
+
+        <div class="lexicon-alphabet-filter">
+          <button class="alpha-btn active" onclick="filterLexiconByLetter('all', this)">Todos</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('A', this)">A</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('E', this)">E</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('G', this)">G</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('H', this)">H</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('J', this)">J</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('K', this)">K</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('M', this)">M</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('P', this)">P</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('R', this)">R</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('S', this)">S</button>
+          <button class="alpha-btn" onclick="filterLexiconByLetter('T', this)">T</button>
+        </div>
+
+        <div class="dictionary-list" id="lexicon-list-container">
+          <!-- Renderizado via JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       RODAPÉ DO PORTAL
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="footer-content">
+      <img src="assets/emblem.jpg" alt="Emblema Bispo Emanuel" class="footer-emblem">
+      <div class="footer-title">Bp. Emanuel - Ministério & Estudos Bíblicos</div>
+      <p class="footer-verse">
+        "Lâmpada para os meus pés é a tua palavra e luz, para o meu caminho." — Salmos 119:105
+      </p>
+      <div class="footer-copy">
+        © 2026 Plataforma de Estudos Bíblicos Bp. Emanuel. Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       MODAIS E DIÁLOGOS
+       ========================================================================== -->
+
+  <!-- Modal 1: Seletor Completo de Livros Bíblicos -->
+  <div class="modal-overlay" id="book-selector-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal('book-selector-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel">Selecione o Livro da Bíblia</h3>
+      </div>
+      <div class="book-selector-tabs">
+        <button class="book-tab-btn active" onclick="filterTestament('AT', this)">Antigo Testamento (39)</button>
+        <button class="book-tab-btn" onclick="filterTestament('NT', this)">Novo Testamento (27)</button>
+      </div>
+      <div class="book-selector-grid" id="book-selector-grid">
+        <!-- Gerado via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Adicionar / Editar Anotação de Versículo -->
+  <div class="modal-overlay" id="note-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal('note-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel">Anotação Bíblica</h3>
+        <span id="note-modal-ref" style="color: var(--accent-gold); font-weight: 700;">Salmos 23:1</span>
+      </div>
+      <div style="margin-bottom: 1.25rem;">
+        <p id="note-modal-quote" style="font-family: 'Lora', serif; font-style: italic; color: var(--text-secondary); margin-bottom: 1rem; border-left: 2px solid var(--accent-gold); padding-left: 0.75rem;"></p>
+        <textarea id="note-modal-text" rows="5" style="width: 100%; resize: vertical;" placeholder="Escreva aqui suas reflexões, revelações e notas de estudo..."></textarea>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button class="btn-secondary" onclick="closeModal('note-modal')">Cancelar</button>
+        <button class="btn-primary" onclick="bibleReader.saveNoteFromModal()">Salvar Anotação</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Gerador de Cartão Visual de Versículo -->
+  <div class="modal-overlay" id="verse-card-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal('verse-card-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel">Gerar Cartão de Versículo</h3>
+      </div>
+      
+      <div class="verse-card-preview" id="verse-card-preview-element" style="background-image: url('assets/hero-bible.jpg');">
+        <div class="card-preview-content">
+          <p class="card-preview-text" id="card-generator-verse-text">"O SENHOR é o meu pastor; nada me faltará."</p>
+          <div class="card-preview-ref" id="card-generator-verse-ref">— Salmos 23:1 (ARC) —</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+        <button class="btn-secondary" onclick="bibleReader.copyCurrentVerse()">
+          📋 Copiar Versículo
+        </button>
+        <button class="btn-primary" onclick="showToast('Cartão pronto para compartilhar com irmãos e redes!')">
+          ✨ Compartilhar Cartão
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Visualizador de Referência Bíblica Interativa -->
+  <div class="modal-overlay" id="verse-preview-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal('verse-preview-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel" id="preview-modal-title">Passagem Bíblica</h3>
+      </div>
+      <div id="preview-modal-content">
+        <!-- Carregado via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Criador de Novo Estudo Bíblico -->
+  <div class="modal-overlay" id="new-study-modal">
+    <div class="modal-box">
+      <button class="modal-close-btn" onclick="closeModal('new-study-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel">Publicar Novo Estudo Bíblico</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Adicione um novo estudo teológico ou sermão para o portal</p>
+      </div>
+      <form onsubmit="handleCreateNewStudy(event)">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Título do Estudo:</label>
+          <input type="text" id="new-study-title" style="width: 100%;" placeholder="Ex: O Poder Transformador da Graça" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Autor / Pregador:</label>
+            <input type="text" id="new-study-author" style="width: 100%;" value="Bispo Emanuel">
+          </div>
+          <div>
+            <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Categoria:</label>
+            <select id="new-study-category" style="width: 100%;">
+              <option value="Teologia Sistemática">Teologia Sistemática</option>
+              <option value="Vida Cristã & Discipulado">Vida Cristã & Discipulado</option>
+              <option value="Oração & Jejum">Oração & Jejum</option>
+              <option value="Parábolas & Evangelhos">Parábolas & Evangelhos</option>
+              <option value="Escatologia & Profecia">Escatologia & Profecia</option>
+              <option value="Liderança Pastoral">Liderança Pastoral</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Passagem Bíblica Base:</label>
+          <input type="text" id="new-study-ref" style="width: 100%;" placeholder="Ex: Romanos 8:28-39">
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Resumo Breve:</label>
+          <input type="text" id="new-study-excerpt" style="width: 100%;" placeholder="Breve resumo da mensagem...">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Conteúdo do Estudo:</label>
+          <textarea id="new-study-content" rows="6" style="width: 100%;" placeholder="Escreva aqui a exposição dos versículos, contexto teológico e lições..." required></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="button" class="btn-secondary" onclick="closeModal('new-study-modal')">Cancelar</button>
+          <button type="submit" class="btn-primary">Publicar Estudo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Container de Notificações Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ==========================================================================
+       SCRIPTS JAVASCRIPT
+       ========================================================================== -->
+  <script src="js/bible-data.js"></script>
+  <script src="js/audio-player.js"></script>
+  <script src="js/bible-reader.js"></script>
+  <script src="js/studies-data.js"></script>
+  <script src="js/reading-plans.js"></script>
+  <script src="js/dictionary-data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

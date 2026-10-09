@@ -1,0 +1,118 @@
+/* ==========================================================================
+   THEMES DEFINITIONS - BP. EMANUEL ESTUDOS BÍBLICOS
+   ========================================================================== */
+
+/* Theme 1: Nobre Escuro (Default - Imperial Gold & Deep Obsidian) */
+:root,
+body[data-theme="dark"] {
+  --bg-primary: #0b0f17;
+  --bg-secondary: #131a26;
+  --bg-tertiary: #1b2434;
+  --bg-card: rgba(19, 26, 38, 0.85);
+  --bg-glass: rgba(19, 26, 38, 0.7);
+  --bg-input: #111722;
+  
+  --border-color: rgba(212, 175, 55, 0.22);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-active: #d4af37;
+
+  --text-primary: #f0f4f8;
+  --text-secondary: #b0bec5;
+  --text-muted: #78909c;
+  --text-scripture: #e2e8f0;
+
+  --accent-gold: #d4af37;
+  --accent-gold-hover: #e6c555;
+  --accent-gold-glow: rgba(212, 175, 55, 0.35);
+  --accent-secondary: #3b82f6;
+
+  --highlight-yellow: rgba(234, 179, 8, 0.35);
+  --highlight-green: rgba(34, 197, 94, 0.35);
+  --highlight-blue: rgba(59, 130, 246, 0.35);
+  --highlight-pink: rgba(236, 72, 153, 0.35);
+
+  --red-letter: #ef4444;
+  --badge-bg: rgba(212, 175, 55, 0.15);
+  --badge-text: #f3d478;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.65);
+  --gold-shadow: 0 4px 20px rgba(212, 175, 55, 0.25);
+}
+
+/* Theme 2: Papel Sépia Bíblico (Aconchegante, Clássico para Leitura Prolongada) */
+body[data-theme="sepia"] {
+  --bg-primary: #f5edd6;
+  --bg-secondary: #ede1c4;
+  --bg-tertiary: #dfd1b0;
+  --bg-card: rgba(245, 237, 214, 0.95);
+  --bg-glass: rgba(237, 225, 196, 0.85);
+  --bg-input: #fbf5e6;
+  
+  --border-color: rgba(146, 96, 32, 0.28);
+  --border-subtle: rgba(146, 96, 32, 0.14);
+  --border-active: #9b6823;
+
+  --text-primary: #2e2213;
+  --text-secondary: #5a4933;
+  --text-muted: #826e54;
+  --text-scripture: #251b0f;
+
+  --accent-gold: #9c6722;
+  --accent-gold-hover: #b57a2c;
+  --accent-gold-glow: rgba(156, 103, 34, 0.28);
+  --accent-secondary: #7b4f17;
+
+  --highlight-yellow: rgba(217, 119, 6, 0.3);
+  --highlight-green: rgba(22, 101, 52, 0.25);
+  --highlight-blue: rgba(30, 64, 175, 0.25);
+  --highlight-pink: rgba(190, 24, 93, 0.25);
+
+  --red-letter: #991b1b;
+  --badge-bg: rgba(156, 103, 34, 0.18);
+  --badge-text: #6b4312;
+
+  --shadow-sm: 0 2px 6px rgba(46, 34, 19, 0.1);
+  --shadow-md: 0 6px 18px rgba(46, 34, 19, 0.15);
+  --shadow-lg: 0 14px 36px rgba(46, 34, 19, 0.22);
+  --gold-shadow: 0 4px 16px rgba(156, 103, 34, 0.2);
+}
+
+/* Theme 3: Claro Minimalista (Limpidez e Alta Legibilidade Diurna) */
+body[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: rgba(255, 255, 255, 0.96);
+  --bg-glass: rgba(255, 255, 255, 0.85);
+  --bg-input: #ffffff;
+  
+  --border-color: rgba(202, 138, 4, 0.3);
+  --border-subtle: #e2e8f0;
+  --border-active: #ca8a04;
+
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #64748b;
+  --text-scripture: #1e293b;
+
+  --accent-gold: #b45309;
+  --accent-gold-hover: #92400e;
+  --accent-gold-glow: rgba(180, 83, 9, 0.22);
+  --accent-secondary: #2563eb;
+
+  --highlight-yellow: rgba(254, 240, 138, 0.7);
+  --highlight-green: rgba(187, 247, 208, 0.7);
+  --highlight-blue: rgba(191, 219, 254, 0.7);
+  --highlight-pink: rgba(251, 207, 232, 0.7);
+
+  --red-letter: #b91c1c;
+  --badge-bg: rgba(180, 83, 9, 0.12);
+  --badge-text: #92400e;
+
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --gold-shadow: 0 4px 16px rgba(180, 83, 9, 0.15);
+}
