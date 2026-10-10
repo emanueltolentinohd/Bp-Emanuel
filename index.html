@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bp. Emanuel | Estudos Bíblicos & Bíblia Sagrada Online</title>
-  <meta name="description" content="Portal de Estudos Bíblicos, Teologia Sistemática e Leitor da Bíblia Sagrada Online com comentários, anotações, planos de leitura e áudio do Bispo Emanuel.">
+  <title>Bíblia Online ACF | Bp. Emanuel — Leia, Ouça e Pesquise as Sagradas Escrituras</title>
+  <meta name="description" content="Leia, ouça e pesquise a Bíblia Sagrada na versão ACF (Almeida Corrigida Fiel). Leitor inteligente, busca por versículos, perícopes, áudio sincronizado e estudos teológicos com o Bispo Emanuel.">
   <meta name="theme-color" content="#0b0f17">
   
   <!-- Favicon e Ícones -->
@@ -13,20 +13,21 @@
   <!-- Estilos e Temas -->
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/bible-online.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body data-theme="dark">
 
   <!-- ==========================================================================
-       CABECALHO & NAVEGACAO SUPERIOR
+       CABEÇALHO & NAVEGAÇÃO PRINCIPAL (ESTILO BÍBLIA ONLINE)
        ========================================================================== -->
   <header class="site-header">
     <div class="nav-container">
       <div class="brand-wrapper" data-route="home">
         <img src="assets/emblem.jpg" alt="Emblema Bp. Emanuel" class="brand-emblem" id="brand-emblem-img">
         <div class="brand-text">
-          <h1>Bp. Emanuel</h1>
-          <span class="brand-subtitle">Estudos Bíblicos & Teologia</span>
+          <h1>Bíblia Online</h1>
+          <span class="brand-subtitle">Bp. Emanuel • Versão ACF</span>
         </div>
       </div>
 
@@ -39,17 +40,22 @@
           </li>
           <li>
             <button class="nav-item-btn" data-route="bible">
-              <span class="nav-icon">📖</span> Bíblia Sagrada
+              <span class="nav-icon">📖</span> Bíblia ACF
+            </button>
+          </li>
+          <li>
+            <button class="nav-item-btn" data-route="search">
+              <span class="nav-icon">🔍</span> Pesquisar
             </button>
           </li>
           <li>
             <button class="nav-item-btn" data-route="studies">
-              <span class="nav-icon">📜</span> Estudos Bíblicos
+              <span class="nav-icon">📜</span> Estudos
             </button>
           </li>
           <li>
             <button class="nav-item-btn" data-route="plans">
-              <span class="nav-icon">📅</span> Planos de Leitura
+              <span class="nav-icon">📅</span> Planos
             </button>
           </li>
           <li>
@@ -66,6 +72,11 @@
       </nav>
 
       <div class="header-actions">
+        <!-- Seletor Rápido de Versão Bíblica -->
+        <button class="reader-version-badge" onclick="bibleReader.toggleVersion()" title="Alternar tradução da Bíblia (ACF / NVI)">
+          <span id="header-version-label">ACF</span> ▾
+        </button>
+
         <!-- Música Sacra Ambiente -->
         <button class="icon-btn ambient-btn" id="ambient-audio-toggle" title="Ativar música suave de oração e meditação">
           🕊️
@@ -73,7 +84,7 @@
 
         <!-- Seletor Rápido de Livros (Ctrl + K) -->
         <button class="icon-btn" onclick="openBookSelectorModal()" title="Localizar Livro ou Capítulo (Ctrl + K)">
-          🔍
+          📖
         </button>
 
         <!-- Menu de Temas (Nobre Escuro, Papel Sépia, Claro Minimalista) -->
@@ -83,13 +94,13 @@
           </button>
           <div class="theme-menu" id="theme-dropdown-menu">
             <button class="theme-option active" data-theme="dark" onclick="themeManager.applyTheme('dark')">
-              <span>🌙</span> Nobre Escuro
+              <span>🌙</span> Nobre Escuro (Midnight)
             </button>
             <button class="theme-option" data-theme="sepia" onclick="themeManager.applyTheme('sepia')">
-              <span>📜</span> Papel Sépia Bíblico
+              <span>📜</span> Papel Sépia Bíblico (Pergaminho)
             </button>
             <button class="theme-option" data-theme="light" onclick="themeManager.applyTheme('light')">
-              <span>☀️</span> Claro Minimalista
+              <span>☀️</span> Claro Minimalista (Clean)
             </button>
           </div>
         </div>
@@ -102,25 +113,56 @@
        ========================================================================== -->
   <main class="main-content">
 
-    <!-- VIEW 1: INÍCIO / DASHBOARD -->
+    <!-- VIEW 1: INÍCIO / HOME ACF (EXATAMENTE COMO O BIBLIAONLINE.COM.BR/ACF) -->
     <section class="view-section active" id="view-home">
-      <!-- Hero Card com Iluminação Dourada -->
+      
+      <!-- Banner Continuar Leitura (Histórico) -->
+      <div class="continue-reading-banner" id="continue-reading-banner" style="display: none;">
+        <div class="continue-reading-info">
+          <span style="font-size: 1.5rem;">📖</span>
+          <div>
+            <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em;">Continuar de onde você parou:</div>
+            <strong id="continue-reading-text" style="color: var(--accent-gold); font-size: 1.05rem;">Gênesis 1 (ACF)</strong>
+          </div>
+        </div>
+        <button class="continue-reading-btn" onclick="appRouter.navigateTo('bible')">
+          Retomar Leitura →
+        </button>
+      </div>
+
+      <!-- Hero Card Imersivo Bíblia Online -->
       <div class="hero-card">
         <div class="hero-background-art"></div>
         <div class="hero-content">
-          <span class="hero-badge">Plataforma Teológica Oficial</span>
+          <span class="hero-badge">Bíblia Sagrada ACF • Almeida Corrigida Fiel</span>
           <h2 class="hero-title">
-            Mergulhe na <span class="gold-gradient-text">Profundidade</span> da Palavra de Deus
+            A <span class="gold-gradient-text">Palavra de Deus</span>, para você, todo dia.
           </h2>
           <p class="hero-description">
-            Estudos exegéticos, reflexões teológicas e leitura imersiva das Sagradas Escrituras com anotações personalizadas, planos de leitura e recursos ministeriais.
+            Leia, ouça e pesquise a Bíblia Sagrada completa em 66 livros. Mais de 31.000 versículos com exegese, referências cruzadas, narração de voz e planos de estudo.
           </p>
-          <div class="hero-actions">
-            <button class="btn-primary" onclick="appRouter.navigateTo('bible')">
-              <span>📖</span> Abrir Bíblia Sagrada
+
+          <!-- Barra de Pesquisa Inteligente no Hero -->
+          <div class="home-search-wrapper">
+            <div class="home-search-bar">
+              <span style="margin-right: 0.5rem; opacity: 0.7;">🔍</span>
+              <input type="text" class="home-search-input" id="home-search-input" 
+                placeholder="Pesquise por referência (ex: 'Jo 3:16', 'Sl 23') ou palavra (ex: 'amor', 'graça')..." 
+                autocomplete="off">
+              <button class="home-search-btn" onclick="bibleSearchEngine.executeGlobalSearch(document.getElementById('home-search-input').value)">
+                Pesquisar
+              </button>
+            </div>
+            <!-- Dropdown Flutuante de Auto-complete -->
+            <div class="search-dropdown-menu" id="home-search-dropdown"></div>
+          </div>
+
+          <div class="hero-actions" style="margin-top: 1rem;">
+            <button class="btn-primary" onclick="appRouter.navigateToRoute('/acf/gn/1')">
+              <span>📖</span> Começar em Gênesis 1
             </button>
-            <button class="btn-secondary" onclick="appRouter.navigateTo('studies')">
-              <span>📜</span> Explorar Estudos Bíblicos
+            <button class="btn-secondary" onclick="openBookSelectorModal()">
+              <span>📚</span> Escolher Outro Livro
             </button>
           </div>
         </div>
@@ -129,159 +171,284 @@
         <div class="daily-verse-wrapper">
           <div class="daily-verse-box">
             <div class="verse-tag">
-              <span>✨</span> Versículo do Dia
+              <span>✨</span> Versículo do Dia (ACF)
             </div>
             <p class="verse-quote-text" id="daily-verse-text">
               "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna."
             </p>
-            <span class="verse-reference" id="daily-verse-ref">— João 3:16 (ARC) —</span>
+            <span class="verse-reference" id="daily-verse-ref">— João 3:16 (ACF) —</span>
             <div class="verse-actions-bar">
-              <button class="verse-action-btn" id="daily-verse-copy-btn">
+              <button class="verse-action-btn" id="daily-verse-audio-btn" title="Ouvir Narração por Voz">
+                🔊 Ouvir
+              </button>
+              <button class="verse-action-btn" id="daily-verse-copy-btn" title="Copiar Versículo">
                 📋 Copiar
               </button>
-              <button class="verse-action-btn" id="daily-verse-context-btn">
-                📖 Ler no Contexto
+              <button class="verse-action-btn" id="daily-verse-card-btn" title="Gerar Cartão Visual para Redes">
+                🖼️ Cartão
+              </button>
+              <button class="verse-action-btn" id="daily-verse-context-btn" title="Ler no Contexto do Capítulo">
+                📖 Ler Capítulo
               </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Prateleira de Acesso Rápido aos Livros Bíblicos -->
+      <!-- PRATELEIRA CANÔNICA COMPLETA: ANTIGO TESTAMENTO (39 LIVROS) -->
       <div class="testament-shelf">
         <div class="section-header-row">
           <div>
             <h3 class="section-title">Antigo Testamento</h3>
-            <p class="section-subtitle">A Lei, os Profetas, os Livros Históricos e Poéticos</p>
+            <p class="section-subtitle">Pentateuco, Livros Históricos, Poéticos & Sabedoria, Profetas Maiores e Menores (39 Livros)</p>
           </div>
-          <button class="btn-secondary" onclick="openBookSelectorModal()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-            Ver Todos os 39 Livros
+          <button class="btn-secondary" onclick="filterTestament('AT'); openBookSelectorModal();" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            Ver Todos com Busca
           </button>
         </div>
-        <div class="books-pill-grid" id="home-at-books-grid">
+        <div class="canonical-shelf-grid" id="home-at-books-grid">
           <!-- Renderizado via JS -->
         </div>
       </div>
 
+      <!-- PRATELEIRA CANÔNICA COMPLETA: NOVO TESTAMENTO (27 LIVROS) -->
       <div class="testament-shelf">
         <div class="section-header-row">
           <div>
             <h3 class="section-title">Novo Testamento</h3>
-            <p class="section-subtitle">Os Evangelhos, Atos dos Apóstolos, Epístolas e Apocalipse</p>
+            <p class="section-subtitle">Os Evangelhos, Atos dos Apóstolos, Epístolas Paulinas, Epístolas Gerais e Apocalipse (27 Livros)</p>
           </div>
-          <button class="btn-secondary" onclick="openBookSelectorModal()" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
-            Ver Todos os 27 Livros
+          <button class="btn-secondary" onclick="filterTestament('NT'); openBookSelectorModal();" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            Ver Todos com Busca
           </button>
         </div>
-        <div class="books-pill-grid" id="home-nt-books-grid">
+        <div class="canonical-shelf-grid" id="home-nt-books-grid">
           <!-- Renderizado via JS -->
         </div>
       </div>
     </section>
 
-    <!-- VIEW 2: LEITOR DA BÍBLIA SAGRADA -->
+    <!-- VIEW 2: LEITOR DA BÍBLIA SAGRADA (PADRÃO BIBLIAONLINE.COM.BR/ACF) -->
     <section class="view-section" id="view-bible">
       <div class="reader-wrapper">
         
-        <!-- Barra Superior de Controle do Leitor -->
+        <!-- BARRA FIXA SUPERIOR DO LEITOR (TOOLBAR BIBLIA ONLINE) -->
         <div class="reader-toolbar">
-          <div class="selector-group">
-            <button class="reader-select-btn" onclick="openBookSelectorModal()">
+          <div class="reader-nav-group">
+            <!-- Botão Selecionar Livro -->
+            <button class="reader-pill-btn" onclick="openBookSelectorModal()" title="Escolher livro da Bíblia">
               <span>📖</span>
-              <span id="book-selector-btn-text">Salmos 23</span>
-              <span style="font-size: 0.8rem;">▼</span>
+              <span id="reader-book-btn-text">Gênesis</span>
+              <span class="caret">▼</span>
             </button>
-            <button class="icon-btn" onclick="bibleReader.previousChapter()" title="Capítulo Anterior (Seta Esquerda)">
+
+            <!-- Botão Selecionar Capítulo em Grade Numérica -->
+            <button class="reader-pill-btn" onclick="openChapterSelectorModal()" title="Escolher capítulo do livro">
+              <span>Capítulo</span>
+              <span id="reader-chap-btn-text">1</span>
+              <span class="caret">▼</span>
+            </button>
+
+            <!-- Botão Selecionar Versão (ACF / NVI) -->
+            <button class="reader-version-badge" onclick="bibleReader.toggleVersion()" title="Alternar tradução da Bíblia">
+              <span id="reader-version-btn-text">ACF</span> ▾
+            </button>
+
+            <!-- Setas de navegação de capítulo -->
+            <button class="reader-ctrl-btn" onclick="bibleReader.previousChapter()" title="Capítulo Anterior (Seta Esquerda)">
               ◀
             </button>
-            <button class="icon-btn" onclick="bibleReader.nextChapter()" title="Próximo Capítulo (Seta Direita)">
+            <button class="reader-ctrl-btn" onclick="bibleReader.nextChapter()" title="Próximo Capítulo (Seta Direita)">
               ▶
             </button>
           </div>
 
-          <div class="reader-settings-group">
-            <button class="play-chapter-btn" id="play-chapter-audio-btn" onclick="bibleReader.narrateFullChapter()">
+          <div class="reader-actions-group">
+            <!-- Botão Ouvir Capítulo (Inicia Áudio Player Dock) -->
+            <button class="listen-chapter-btn" id="listen-chapter-btn" onclick="bibleReader.startChapterAudio()">
               <span>🔊</span> Ouvir Capítulo
             </button>
 
-            <div class="font-size-adjust" title="Tamanho do Texto">
-              <button class="font-size-btn" onclick="bibleReader.adjustFontSize(-2)">A-</button>
-              <span id="current-font-size-label" style="font-size: 0.75rem; padding: 0 4px; color: var(--text-muted);">19px</span>
-              <button class="font-size-btn" onclick="bibleReader.adjustFontSize(2)">A+</button>
-            </div>
+            <!-- Botão Opções de Leitura (Aa) -->
+            <button class="reader-ctrl-btn" onclick="openReadingOptionsModal()" data-action="open-options" title="Opções de Leitura e Tipografia (Aa)">
+              Aa
+            </button>
           </div>
         </div>
 
-        <!-- Seletor Horizontal de Capítulos -->
+        <!-- Breadcrumb do Capítulo -->
+        <nav class="reader-breadcrumb" aria-label="Navegação do Capítulo">
+          <a href="#/home">Início</a>
+          <span class="sep">/</span>
+          <span class="current" id="reader-breadcrumb-version">ACF</span>
+          <span class="sep">/</span>
+          <a href="javascript:void(0)" onclick="openBookSelectorModal()" id="reader-breadcrumb-book">Gênesis</a>
+          <span class="sep">/</span>
+          <span class="current" id="reader-breadcrumb-chap">Capítulo 1</span>
+        </nav>
+
+        <!-- Seletor Horizontal de Capítulos Rápidos -->
         <div class="chapter-pills-bar" id="chapter-pills-bar">
-          <!-- Gerado dinamicamente -->
+          <!-- Renderizado dinamicamente -->
         </div>
 
-        <!-- Folha de Leitura Sagrada -->
-        <article class="reading-sheet">
-          <header class="sheet-header">
-            <span class="sheet-chapter-badge" id="reader-chap-badge">Capítulo 23</span>
-            <h2 class="sheet-book-title" id="reader-book-title">Salmos</h2>
-            <div class="sheet-translation-tag">Versão Almeida Revista e Corrigida (ARC)</div>
+        <!-- FOLHA DE LEITURA SAGRADA -->
+        <article class="reading-sheet" id="reading-sheet" data-view-mode="verseByVerse" data-font-family="serif" data-line-height="normal">
+          <header class="reader-header-box">
+            <div>
+              <h2 class="reader-sheet-title" id="reader-sheet-title">Gênesis 1</h2>
+              <div class="reader-version-sub">Tradução: Almeida Corrigida Fiel (ACF)</div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn-secondary" style="font-size: 0.8rem; padding: 0.35rem 0.75rem;" onclick="openReadingOptionsModal()">
+                ⚙️ Ajustar Leitura
+              </button>
+            </div>
           </header>
 
+          <!-- Versículos Renderizados Dinamicamente -->
           <div class="verses-container" id="verses-list-container">
-            <!-- Versículos renderizados dinamicamente -->
+            <!-- Conteúdo carregado via BibleReaderEngine -->
           </div>
 
           <!-- Rodapé de Navegação do Capítulo -->
-          <footer class="sheet-footer-nav">
-            <button class="nav-chapter-btn" onclick="bibleReader.previousChapter()">
+          <footer class="sheet-footer-nav" style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <button class="btn-secondary" onclick="bibleReader.previousChapter()">
               ← Capítulo Anterior
             </button>
             <button class="btn-primary" onclick="openBookSelectorModal()">
-              Ir para Outro Livro
+              Escolher Outro Livro
             </button>
-            <button class="nav-chapter-btn" onclick="bibleReader.nextChapter()">
+            <button class="btn-secondary" onclick="bibleReader.nextChapter()">
               Próximo Capítulo →
             </button>
           </footer>
         </article>
       </div>
 
-      <!-- Barra Flutuante de Ações do Versículo Selecionado -->
-      <div class="floating-verse-toolbar" id="floating-verse-toolbar">
-        <span class="selected-verse-badge" id="toolbar-verse-label">Sl 23:1</span>
-        
-        <!-- Cores de Destaque -->
-        <div class="highlight-color-picker">
-          <button class="color-dot-btn dot-yellow" onclick="bibleReader.setHighlight('yellow')" title="Destacar Amarelo"></button>
-          <button class="color-dot-btn dot-green" onclick="bibleReader.setHighlight('green')" title="Destacar Verde"></button>
-          <button class="color-dot-btn dot-blue" onclick="bibleReader.setHighlight('blue')" title="Destacar Azul"></button>
-          <button class="color-dot-btn dot-pink" onclick="bibleReader.setHighlight('pink')" title="Destacar Rosa"></button>
-          <button class="color-dot-btn dot-clear" onclick="bibleReader.setHighlight('clear')" title="Remover Destaque">✕</button>
+      <!-- BARRA FLUTUANTE DE AÇÕES DO VERSÍCULO SELECIONADO (FLOATING ACTION DOCK) -->
+      <div class="floating-verse-dock" id="floating-verse-dock">
+        <div class="dock-badge-group">
+          <span class="dock-ref" id="dock-ref-badge">Gênesis 1:1 (ACF)</span>
+          <span class="dock-count" id="dock-count-badge">1 versículo</span>
         </div>
 
-        <!-- Ações Adicionais -->
-        <button class="toolbar-action-btn" onclick="bibleReader.openNoteModal()">
-          <span>📝</span> Anotar
-        </button>
-        <button class="toolbar-action-btn" onclick="bibleReader.toggleFavoriteCurrent()">
-          <span>⭐</span> Favoritar
-        </button>
-        <button class="toolbar-action-btn" onclick="bibleReader.copyCurrentVerse()">
+        <!-- Cores do Marca-Texto -->
+        <div class="dock-color-dots">
+          <button class="dock-dot yellow" onclick="bibleReader.setHighlight('yellow')" title="Marcar Amarelo"></button>
+          <button class="dock-dot green" onclick="bibleReader.setHighlight('green')" title="Marcar Verde"></button>
+          <button class="dock-dot blue" onclick="bibleReader.setHighlight('blue')" title="Marcar Azul"></button>
+          <button class="dock-dot pink" onclick="bibleReader.setHighlight('pink')" title="Marcar Rosa"></button>
+          <button class="dock-dot orange" onclick="bibleReader.setHighlight('orange')" title="Marcar Laranja"></button>
+          <button class="dock-dot clear" onclick="bibleReader.setHighlight('clear')" title="Remover Destaque">✕</button>
+        </div>
+
+        <!-- Ações do Versículo -->
+        <button class="dock-btn" onclick="bibleReader.copySelection()" title="Copiar Versículo(s)">
           <span>📋</span> Copiar
         </button>
-        <button class="toolbar-action-btn" onclick="bibleReader.narrateCurrentVerse()">
-          <span>🔊</span> Narrar
+        <button class="dock-btn" onclick="bibleReader.openNoteModal()" title="Adicionar Anotação Pessoal">
+          <span>📝</span> Anotar
         </button>
-        <button class="toolbar-action-btn" onclick="bibleReader.openVerseCardGenerator()">
-          <span>🖼️</span> Gerar Cartão
+        <button class="dock-btn" onclick="bibleReader.toggleFavoriteCurrent()" title="Adicionar aos Favoritos">
+          <span>⭐</span> Favorito
         </button>
+        <button class="dock-btn" onclick="bibleReader.openVerseCardGenerator()" title="Gerar Cartão para Redes">
+          <span>🖼️</span> Cartão
+        </button>
+        <button class="dock-btn" onclick="bibleReader.openComparisonModal()" title="Comparar ACF com NVI">
+          <span>🔄</span> Comparar
+        </button>
+        <button class="dock-close-btn" onclick="bibleReader.clearSelection()" title="Desmarcar seleção">
+          ✕
+        </button>
+      </div>
+
+      <!-- DOCK DE ÁUDIO PLAYER FLUTUANTE (STREAMING SINCRONIZADO) -->
+      <div class="floating-audio-dock" id="floating-audio-dock">
+        <div class="audio-dock-container">
+          <div class="audio-track-info">
+            <div class="audio-icon-pulse">🔊</div>
+            <div>
+              <div class="audio-title-text" id="dock-audio-title">Gênesis 1</div>
+              <div class="audio-subtitle-text">
+                <span id="dock-audio-verse-label">v. 1 de 31</span> • <span id="dock-audio-version">ACF</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="audio-controls-center">
+            <div class="audio-btns-row">
+              <button class="audio-ctrl-sec" onclick="bibleReader.previousChapter()" title="Capítulo Anterior">⏮</button>
+              <button class="audio-ctrl-main" id="dock-play-pause-btn" onclick="bibleReader.toggleAudioPlayPause()" title="Pausar / Retomar Narração">⏸</button>
+              <button class="audio-ctrl-sec" onclick="bibleReader.stopAudio()" title="Parar Leitura">⏹</button>
+              <button class="audio-ctrl-sec" onclick="bibleReader.nextChapter()" title="Próximo Capítulo">⏭</button>
+            </div>
+            <div class="audio-progress-wrap">
+              <div class="audio-progress-bar" id="dock-audio-progress-bar"></div>
+            </div>
+          </div>
+
+          <div class="audio-extra-controls">
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Velocidade:</span>
+            <button class="speed-btn active" data-speed="1.0" onclick="bibleReader.setAudioSpeed(1.0)">1.0x</button>
+            <button class="speed-btn" data-speed="1.25" onclick="bibleReader.setAudioSpeed(1.25)">1.25x</button>
+            <button class="speed-btn" data-speed="1.5" onclick="bibleReader.setAudioSpeed(1.5)">1.5x</button>
+            <button class="audio-ctrl-sec" style="margin-left: 0.5rem;" onclick="bibleReader.stopAudio()" title="Fechar Player">✕</button>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- VIEW 3: PORTAL DE ESTUDOS BÍBLICOS -->
+    <!-- VIEW 3: PESQUISA BÍBLICA GLOBAL (BUSCA EM TODA A ACF) -->
+    <section class="view-section" id="view-search">
+      <div class="search-view-container">
+        <div class="section-header-row">
+          <div>
+            <h2 class="section-title">Pesquisa na Bíblia Sagrada</h2>
+            <p class="section-subtitle">Localize qualquer palavra, frase ou conceito em toda a tradução ACF</p>
+          </div>
+        </div>
+
+        <div class="home-search-bar" style="margin-bottom: 0.5rem;">
+          <span style="margin-right: 0.5rem; opacity: 0.7;">🔍</span>
+          <input type="text" class="home-search-input" id="global-search-input" 
+            placeholder="Digite palavras-chave (ex: amor, esperança, justificação, paz)..." 
+            onkeydown="if(event.key === 'Enter') { bibleSearchEngine.currentQuery = this.value; bibleSearchEngine.performSearch(); }">
+          <button class="home-search-btn" onclick="bibleSearchEngine.currentQuery = document.getElementById('global-search-input').value; bibleSearchEngine.performSearch();">
+            Buscar
+          </button>
+        </div>
+
+        <!-- Filtros de Escopo da Pesquisa -->
+        <div class="search-filter-pills">
+          <button class="search-filter-btn active" onclick="bibleSearchEngine.setFilterScope('all', this)">Toda a Bíblia</button>
+          <button class="search-filter-btn" onclick="bibleSearchEngine.setFilterScope('AT', this)">Antigo Testamento</button>
+          <button class="search-filter-btn" onclick="bibleSearchEngine.setFilterScope('NT', this)">Novo Testamento</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin: 1rem 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-subtle);">
+          <span style="font-size: 0.9rem; color: var(--text-muted);" id="search-results-count">0 versículos encontrados</span>
+          <span style="font-size: 0.82rem; color: var(--accent-gold); font-weight: 700;">Versão ACF</span>
+        </div>
+
+        <!-- Lista de Resultados da Pesquisa -->
+        <div id="search-results-container">
+          <div class="empty-state-box">
+            <span style="font-size: 2.5rem;">🔍</span>
+            <h3>Pesquise nas Sagradas Escrituras</h3>
+            <p>Digite um termo como "graça", "arrependimento" ou "salvação" para encontrar passagens em toda a Bíblia ACF.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: PORTAL DE ESTUDOS BÍBLICOS DO BISPO EMANUEL -->
     <section class="view-section" id="view-studies">
       <div class="section-header-row">
         <div>
           <h2 class="section-title">Estudos Bíblicos & Teologia</h2>
-          <p class="section-subtitle">Exegese, doutrinas fundamentais e reflexões pastorais para edificação</p>
+          <p class="section-subtitle">Exegese doutrinária, teologia sistemática e reflexões pastorais para edificação</p>
         </div>
         <button class="btn-primary" onclick="openModal('new-study-modal')">
           <span>✍️</span> + Novo Estudo
@@ -307,18 +474,18 @@
       </div>
     </section>
 
-    <!-- VIEW 4: LEITOR DO ESTUDO INDIVIDUAL -->
+    <!-- VIEW 5: LEITOR DO ESTUDO INDIVIDUAL -->
     <section class="view-section" id="view-study-view">
       <!-- Renderizado dinamicamente via JS ao abrir estudo -->
     </section>
 
-    <!-- VIEW 5: PLANOS DE LEITURA BÍBLICA -->
+    <!-- VIEW 6: PLANOS DE LEITURA BÍBLICA -->
     <section class="view-section" id="view-plans">
       <div class="plans-container">
         <div class="section-header-row">
           <div>
-            <h2 class="section-title">Planos de Leitura da Bíblia</h2>
-            <p class="section-subtitle">Metas diárias estruturadas para nutrir sua vida espiritual com consistência</p>
+            <h2 class="section-title">Planos de Leitura da Palavra</h2>
+            <p class="section-subtitle">Metas diárias estruturadas para nutrir sua comunhão com Deus e disciplina devocional</p>
           </div>
         </div>
 
@@ -328,13 +495,13 @@
       </div>
     </section>
 
-    <!-- VIEW 6: ANOTAÇÕES E FAVORITOS -->
+    <!-- VIEW 7: ANOTAÇÕES E FAVORITOS DO USUÁRIO -->
     <section class="view-section" id="view-notes">
       <div class="notes-container">
         <div class="section-header-row">
           <div>
             <h2 class="section-title">Minhas Anotações & Destaques</h2>
-            <p class="section-subtitle">Todos os versículos anotados e iluminados durante o seu devocional</p>
+            <p class="section-subtitle">Todos os versículos destacados e comentários pessoais registrados durante seus estudos</p>
           </div>
         </div>
 
@@ -344,20 +511,20 @@
       </div>
     </section>
 
-    <!-- VIEW 7: DICIONÁRIO TEOLÓGICO -->
+    <!-- VIEW 8: DICIONÁRIO & LÉXICO TEOLÓGICO -->
     <section class="view-section" id="view-lexicon">
       <div class="lexicon-container">
         <div class="section-header-row">
           <div>
             <h2 class="section-title">Dicionário & Léxico Teológico</h2>
-            <p class="section-subtitle">Significados etimológicos em Hebraico e Grego dos termos sagrados</p>
+            <p class="section-subtitle">Significados etimológicos em Hebraico e Grego dos conceitos teológicos centrais</p>
           </div>
         </div>
 
         <div class="search-input-wrapper">
           <span class="search-icon-inside">🔍</span>
           <input type="text" class="search-input" id="lexicon-search-input" 
-            placeholder="Pesquisar termo teológico (ex: Graça, Justificação, Propiciação...)" 
+            placeholder="Pesquisar termo teológico (ex: Graça, Justificação, Propiciação, Metanoia...)" 
             oninput="renderLexiconView()">
         </div>
 
@@ -390,48 +557,169 @@
   <footer class="site-footer">
     <div class="footer-content">
       <img src="assets/emblem.jpg" alt="Emblema Bispo Emanuel" class="footer-emblem">
-      <div class="footer-title">Bp. Emanuel - Ministério & Estudos Bíblicos</div>
+      <div class="footer-title">Bíblia Online • Ministério Bp. Emanuel</div>
       <p class="footer-verse">
-        "Lâmpada para os meus pés é a tua palavra e luz, para o meu caminho." — Salmos 119:105
+        "Lâmpada para os meus pés é tua palavra e luz, para o meu caminho." — Salmos 119:105 (ACF)
       </p>
       <div class="footer-copy">
-        © 2026 Plataforma de Estudos Bíblicos Bp. Emanuel. Todos os direitos reservados.
+        © 2026 Plataforma de Estudos Bíblicos Bp. Emanuel. Versão ACF (Almeida Corrigida Fiel).
       </div>
     </div>
   </footer>
 
   <!-- ==========================================================================
-       MODAIS E DIÁLOGOS
+       MODAIS E DIÁLOGOS (PADRÃO BÍBLIA ONLINE)
        ========================================================================== -->
 
-  <!-- Modal 1: Seletor Completo de Livros Bíblicos -->
+  <!-- MODAL 1: SELETOR DE LIVROS DA BÍBLIA (COM ABAS AT / NT E BUSCA) -->
   <div class="modal-overlay" id="book-selector-modal">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 680px;">
       <button class="modal-close-btn" onclick="closeModal('book-selector-modal')">✕</button>
       <div class="modal-header">
         <h3 class="modal-title font-cinzel">Selecione o Livro da Bíblia</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">66 Livros canônicos das Sagradas Escrituras (ACF)</p>
       </div>
+
+      <!-- Campo de Busca de Livro no Modal -->
+      <div class="book-selector-search-box">
+        <input type="text" class="search-input" id="book-modal-search" 
+          placeholder="Filtrar por nome ou sigla (ex: Gn, Salmos, João, Rm)..." 
+          oninput="handleBookSearchFilter(this.value)">
+      </div>
+
       <div class="book-selector-tabs">
         <button class="book-tab-btn active" onclick="filterTestament('AT', this)">Antigo Testamento (39)</button>
         <button class="book-tab-btn" onclick="filterTestament('NT', this)">Novo Testamento (27)</button>
       </div>
+
       <div class="book-selector-grid" id="book-selector-grid">
-        <!-- Gerado via JS -->
+        <!-- Renderizado dinamicamente via JS -->
       </div>
     </div>
   </div>
 
-  <!-- Modal 2: Adicionar / Editar Anotação de Versículo -->
+  <!-- MODAL 2: SELETOR DE CAPÍTULOS EM GRADE NUMÉRICA DIRETA -->
+  <div class="modal-overlay" id="chapter-selector-modal">
+    <div class="modal-box" style="max-width: 540px;">
+      <button class="modal-close-btn" onclick="closeModal('chapter-selector-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel" id="chapter-modal-book-title">Gênesis</h3>
+        <span id="chapter-modal-book-count" style="color: var(--accent-gold); font-weight: 700;">50 capítulos</span>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Selecione o capítulo desejado para iniciar a leitura:</p>
+      <div class="chapters-numeric-grid" id="chapter-selector-grid">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: OPÇÕES DE LEITURA (Aa) -->
+  <div class="modal-overlay" id="reading-options-modal">
+    <div class="modal-box" style="max-width: 480px;">
+      <button class="modal-close-btn" onclick="closeModal('reading-options-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel">Opções de Leitura</h3>
+      </div>
+
+      <!-- Modo de Exibição -->
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Modo de Exibição:</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+          <button class="view-mode-btn active" data-mode="verseByVerse" onclick="bibleReader.setViewMode('verseByVerse')">
+            📑 Versículo por Versículo
+          </button>
+          <button class="view-mode-btn" data-mode="runningText" onclick="bibleReader.setViewMode('runningText')">
+            📖 Texto Corrido
+          </button>
+        </div>
+      </div>
+
+      <!-- Tipografia -->
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Família da Fonte:</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+          <button class="font-family-btn active" data-family="serif" onclick="bibleReader.setFontFamily('serif')">
+            <span style="font-family: 'Lora', serif; font-size: 1.1rem;">Serifada (Bíblica)</span>
+          </button>
+          <button class="font-family-btn" data-family="sans" onclick="bibleReader.setFontFamily('sans')">
+            <span style="font-family: 'Plus Jakarta Sans', sans-serif;">Sem Serifa (Moderna)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tamanho da Fonte -->
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Tamanho do Texto:</label>
+        <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-input); padding: 0.5rem 1rem; border-radius: 8px;">
+          <button class="font-size-btn" onclick="bibleReader.adjustFontSize(-2)">A-</button>
+          <span id="options-font-size-label" style="font-weight: 700; color: var(--accent-gold);">19px</span>
+          <button class="font-size-btn" onclick="bibleReader.adjustFontSize(2)">A+</button>
+        </div>
+      </div>
+
+      <!-- Temas Visuais -->
+      <div style="margin-bottom: 1rem;">
+        <label style="display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Tema de Leitura:</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem;">
+          <button class="theme-option" onclick="themeManager.applyTheme('dark')">
+            🌙 Escuro
+          </button>
+          <button class="theme-option" onclick="themeManager.applyTheme('sepia')">
+            📜 Sépia
+          </button>
+          <button class="theme-option" onclick="themeManager.applyTheme('light')">
+            ☀️ Claro
+          </button>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+        <button class="btn-primary" onclick="closeModal('reading-options-modal')">Concluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: COMPARADOR DE VERSÕES (ACF vs NVI) -->
+  <div class="modal-overlay" id="compare-version-modal">
+    <div class="modal-box" style="max-width: 650px;">
+      <button class="modal-close-btn" onclick="closeModal('compare-version-modal')">✕</button>
+      <div class="modal-header">
+        <h3 class="modal-title font-cinzel" id="compare-modal-title">Comparação de Versões</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Estudo exegético comparativo das Escrituras</p>
+      </div>
+      <div class="comparison-split-view">
+        <div class="version-box">
+          <div class="version-box-header">
+            <span class="version-box-title">ACF</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Almeida Corrigida Fiel</span>
+          </div>
+          <p class="version-box-text" id="compare-text-acf">Carregando...</p>
+        </div>
+        <div class="version-box">
+          <div class="version-box-header">
+            <span class="version-box-title">NVI</span>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Nova Versão Internacional</span>
+          </div>
+          <p class="version-box-text" id="compare-text-nvi">Carregando...</p>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+        <button class="btn-primary" onclick="closeModal('compare-version-modal')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 5: ADICIONAR / EDITAR ANOTAÇÃO DE VERSÍCULO -->
   <div class="modal-overlay" id="note-modal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="closeModal('note-modal')">✕</button>
       <div class="modal-header">
         <h3 class="modal-title font-cinzel">Anotação Bíblica</h3>
-        <span id="note-modal-ref" style="color: var(--accent-gold); font-weight: 700;">Salmos 23:1</span>
+        <span id="note-modal-ref" style="color: var(--accent-gold); font-weight: 700;">Gênesis 1:1 (ACF)</span>
       </div>
       <div style="margin-bottom: 1.25rem;">
         <p id="note-modal-quote" style="font-family: 'Lora', serif; font-style: italic; color: var(--text-secondary); margin-bottom: 1rem; border-left: 2px solid var(--accent-gold); padding-left: 0.75rem;"></p>
-        <textarea id="note-modal-text" rows="5" style="width: 100%; resize: vertical;" placeholder="Escreva aqui suas reflexões, revelações e notas de estudo..."></textarea>
+        <textarea id="note-modal-text" rows="5" style="width: 100%; resize: vertical;" placeholder="Escreva aqui suas reflexões, notas de estudo e revelações..."></textarea>
       </div>
       <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
         <button class="btn-secondary" onclick="closeModal('note-modal')">Cancelar</button>
@@ -440,52 +728,51 @@
     </div>
   </div>
 
-  <!-- Modal 3: Gerador de Cartão Visual de Versículo -->
+  <!-- MODAL 6: GERADOR DE CARTÃO VISUAL DE VERSÍCULO -->
   <div class="modal-overlay" id="verse-card-modal">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 580px;">
       <button class="modal-close-btn" onclick="closeModal('verse-card-modal')">✕</button>
       <div class="modal-header">
         <h3 class="modal-title font-cinzel">Gerar Cartão de Versículo</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Compartilhe a Palavra no WhatsApp e Redes Sociais</p>
       </div>
       
       <div class="verse-card-preview" id="verse-card-preview-element" style="background-image: url('assets/hero-bible.jpg');">
         <div class="card-preview-content">
-          <p class="card-preview-text" id="card-generator-verse-text">"O SENHOR é o meu pastor; nada me faltará."</p>
-          <div class="card-preview-ref" id="card-generator-verse-ref">— Salmos 23:1 (ARC) —</div>
+          <p class="card-preview-text" id="card-generator-verse-text">"No princípio criou Deus os céus e a terra."</p>
+          <div class="card-preview-ref" id="card-generator-verse-ref">— Gênesis 1:1 (ACF) —</div>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
-        <button class="btn-secondary" onclick="bibleReader.copyCurrentVerse()">
-          📋 Copiar Versículo
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; flex-wrap: wrap; gap: 0.5rem;">
+        <button class="btn-secondary" onclick="bibleReader.copySelection()">
+          📋 Copiar Texto
         </button>
-        <button class="btn-primary" onclick="showToast('Cartão pronto para compartilhar com irmãos e redes!')">
-          ✨ Compartilhar Cartão
+        <button class="btn-primary" onclick="showToast('Cartão salvo e pronto para compartilhar! ✨')">
+          📲 Compartilhar no WhatsApp
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal 4: Visualizador de Referência Bíblica Interativa -->
+  <!-- MODAL 7: VISUALIZADOR DE REFERÊNCIA BÍBLICA INTERATIVA -->
   <div class="modal-overlay" id="verse-preview-modal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="closeModal('verse-preview-modal')">✕</button>
       <div class="modal-header">
         <h3 class="modal-title font-cinzel" id="preview-modal-title">Passagem Bíblica</h3>
       </div>
-      <div id="preview-modal-content">
-        <!-- Carregado via JS -->
-      </div>
+      <div id="preview-modal-content"></div>
     </div>
   </div>
 
-  <!-- Modal 5: Criador de Novo Estudo Bíblico -->
+  <!-- MODAL 8: CRIAR NOVO ESTUDO BÍBLICO -->
   <div class="modal-overlay" id="new-study-modal">
     <div class="modal-box">
       <button class="modal-close-btn" onclick="closeModal('new-study-modal')">✕</button>
       <div class="modal-header">
         <h3 class="modal-title font-cinzel">Publicar Novo Estudo Bíblico</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Adicione um novo estudo teológico ou sermão para o portal</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Adicione um novo sermão ou artigo teológico</p>
       </div>
       <form onsubmit="handleCreateNewStudy(event)">
         <div style="margin-bottom: 1rem;">
@@ -523,7 +810,7 @@
 
         <div style="margin-bottom: 1.5rem;">
           <label style="display: block; font-weight: 600; margin-bottom: 0.35rem;">Conteúdo do Estudo:</label>
-          <textarea id="new-study-content" rows="6" style="width: 100%;" placeholder="Escreva aqui a exposição dos versículos, contexto teológico e lições..." required></textarea>
+          <textarea id="new-study-content" rows="6" style="width: 100%;" placeholder="Escreva a exposição dos versículos e lições..." required></textarea>
         </div>
 
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
@@ -538,11 +825,22 @@
   <div class="toast-container" id="toast-container"></div>
 
   <!-- ==========================================================================
-       SCRIPTS JAVASCRIPT
+       SCRIPTS JAVASCRIPT (ORDEM DE DEPENDÊNCIA PERFEITA)
        ========================================================================== -->
+  <!-- 1. Textos Completos dos 66 Livros da Bíblia Offline (ACF e NVI) -->
+  <script src="js/bible-acf.js"></script>
+  <script src="js/bible-nvi.js"></script>
+  
+  <!-- 2. Metadados e Índices Canônicos -->
   <script src="js/bible-data.js"></script>
+  <script src="js/bible-service.js"></script>
   <script src="js/audio-player.js"></script>
+  
+  <!-- 3. Motores de Leitura e Pesquisa -->
   <script src="js/bible-reader.js"></script>
+  <script src="js/bible-search.js"></script>
+  
+  <!-- 4. Recursos Adicionais e Roteamento -->
   <script src="js/studies-data.js"></script>
   <script src="js/reading-plans.js"></script>
   <script src="js/dictionary-data.js"></script>

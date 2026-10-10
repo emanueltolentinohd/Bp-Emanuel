@@ -1,6 +1,7 @@
 /**
- * APLICAÇÃO PRINCIPAL - ROTEADOR, TEMAS E CONTROLADORES DE INTERFACE
- * Plataforma de Estudos Bíblicos Bp. Emanuel
+ * APLICAÇÃO PRINCIPAL - ROTEADOR SPA, TEMAS E CONTROLADORES DE INTERFACE
+ * Plataforma Bíblia Online ACF — Bp. Emanuel
+ * Lógica compatível com bibliaonline.com.br/acf
  */
 
 // ==========================================================================
@@ -47,10 +48,7 @@ class ThemeManager {
     document.body.setAttribute('data-theme', theme);
     localStorage.setItem('bp_theme', theme);
 
-    // Atualiza ícones e botões ativos no menu
     const iconMap = { dark: '🌙', sepia: '📜', light: '☀️' };
-    const labelMap = { dark: 'Nobre Escuro', sepia: 'Papel Sépia', light: 'Claro' };
-
     const currentIcon = document.getElementById('current-theme-icon');
     if (currentIcon) currentIcon.textContent = iconMap[theme] || '🌙';
 
@@ -68,7 +66,7 @@ class ThemeManager {
 const themeManager = new ThemeManager();
 
 // ==========================================================================
-// ROTEADOR DE VISUALIZAÇÕES (SPA VIEWS)
+// ROTEADOR DE VISUALIZAÇÕES E ROTAS HASH (PADRÃO BIBLIAONLINE.COM.BR/ACF)
 // ==========================================================================
 class AppRouter {
   constructor() {
@@ -77,30 +75,87 @@ class AppRouter {
   }
 
   init() {
-    // Escuta cliques nos botões de navegação
+    // Clique nos botões do menu com data-route
     document.querySelectorAll('[data-route]').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const route = btn.getAttribute('data-route');
-        this.navigateTo(route);
+        if (route === 'bible') {
+          this.navigateToRoute(`/acf/${bibleReader.currentBookSlug}/${bibleReader.currentChapter}`);
+        } else {
+          this.navigateTo(route);
+        }
       });
     });
 
-    // Hash navigation
+    // Escuta mudanças de hash na URL
     window.addEventListener('hashchange', () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash) this.navigateTo(hash, false);
+      this.handleHashChange();
     });
 
-    if (window.location.hash) {
-      this.navigateTo(window.location.hash.replace('#', ''), false);
+    // Rota inicial ao carregar a página
+    this.handleHashChange();
+  }
+
+  handleHashChange() {
+    const hash = window.location.hash.replace(/^#\/?/, '');
+    if (!hash || hash === 'acf' || hash === 'home') {
+      this.navigateTo('home', false);
+      return;
     }
+
+    // Padrão 1: /acf/:slug/:chapter ou /nvi/:slug/:chapter (com versículo opcional)
+    // Ex: acf/gn/1 ou acf/sl/23 ou acf/jo/3:16
+    const bibleMatch = hash.match(/^(acf|nvi)\/([a-z0-9à-ÿ]+)\/(\d+)(?::(\d+))?$/i);
+    if (bibleMatch) {
+      const version = bibleMatch[1].toUpperCase();
+      const slug = bibleMatch[2].toLowerCase();
+      const chapter = parseInt(bibleMatch[3]);
+      const verse = bibleMatch[4] ? parseInt(bibleMatch[4]) : null;
+
+      bibleService.setVersion(version);
+      this.navigateTo('bible', false);
+      bibleReader.loadChapter(slug, chapter, verse);
+      return;
+    }
+
+    // Padrão 2: busca?q=termo
+    if (hash.startsWith('busca')) {
+      const params = new URLSearchParams(hash.replace('busca', '').replace(/^\?/, ''));
+      const q = params.get('q');
+      this.navigateTo('search', false);
+      if (q) {
+        bibleSearchEngine.currentQuery = q;
+        const input = document.getElementById('global-search-input');
+        if (input) input.value = q;
+        bibleSearchEngine.performSearch();
+      }
+      return;
+    }
+
+    // Padrão 3: rotas estáticas: estudos, planos, anotacoes, dicionario
+    const cleanRoute = hash.split('/')[0];
+    const knownRoutes = ['home', 'bible', 'studies', 'plans', 'notes', 'lexicon', 'search'];
+    if (knownRoutes.includes(cleanRoute)) {
+      this.navigateTo(cleanRoute, false);
+    } else {
+      this.navigateTo('home', false);
+    }
+  }
+
+  navigateToRoute(path) {
+    window.location.hash = path;
   }
 
   navigateTo(viewId, updateHash = true) {
     this.currentView = viewId;
+
     if (updateHash) {
-      window.location.hash = viewId;
+      if (viewId === 'bible') {
+        window.location.hash = `/acf/${bibleReader.currentBookSlug}/${bibleReader.currentChapter}`;
+      } else {
+        window.location.hash = `/${viewId}`;
+      }
     }
 
     // Atualiza botões do header
@@ -108,7 +163,7 @@ class AppRouter {
       btn.classList.toggle('active', btn.getAttribute('data-route') === viewId);
     });
 
-    // Oculta todas as seções e exibe a selecionada
+    // Alterna visibilidade das seções
     document.querySelectorAll('.view-section').forEach(section => {
       section.classList.remove('active');
     });
@@ -119,9 +174,9 @@ class AppRouter {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Inicializações específicas de visualização
+    // Inicializações de views específicas
     if (viewId === 'bible') {
-      bibleReader.loadChapter(bibleReader.currentBookId, bibleReader.currentChapter);
+      bibleReader.loadChapter(bibleReader.currentBookSlug, bibleReader.currentChapter);
     } else if (viewId === 'studies') {
       renderStudiesGrid();
     } else if (viewId === 'plans') {
@@ -130,6 +185,8 @@ class AppRouter {
       renderNotesView();
     } else if (viewId === 'lexicon') {
       renderLexiconView();
+    } else if (viewId === 'home') {
+      bibleReader.updateContinueReadingCard();
     }
   }
 }
@@ -137,7 +194,215 @@ class AppRouter {
 let appRouter;
 
 // ==========================================================================
-// CONTROLADOR DA SEÇÃO DE ESTUDOS BÍBLICOS
+// MODAL DE SELEÇÃO DE LIVROS (BIBLIA ONLINE LOGIC: AT 39 / NT 27 COM BUSCA)
+// ==========================================================================
+let currentTestamentFilter = 'AT';
+
+function openBookSelectorModal() {
+  const searchInput = document.getElementById('book-modal-search');
+  if (searchInput) searchInput.value = '';
+  renderBookSelectorGrid();
+  openModal('book-selector-modal');
+  setTimeout(() => {
+    if (searchInput) searchInput.focus();
+  }, 100);
+}
+
+function filterTestament(testament, btn) {
+  currentTestamentFilter = testament;
+  document.querySelectorAll('.book-tab-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderBookSelectorGrid();
+}
+
+function handleBookSearchFilter(query) {
+  renderBookSelectorGrid(query.trim().toLowerCase());
+}
+
+function renderBookSelectorGrid(searchQuery = '') {
+  const container = document.getElementById('book-selector-grid');
+  if (!container) return;
+
+  const allBooks = bibleService.getBooks();
+  let filtered = allBooks;
+
+  if (searchQuery) {
+    const unaccent = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    const cleanQ = unaccent(searchQuery);
+    filtered = allBooks.filter(b => 
+      unaccent(b.name).includes(cleanQ) || 
+      unaccent(b.abbrev).includes(cleanQ) || 
+      unaccent(b.slug).includes(cleanQ)
+    );
+  } else {
+    filtered = allBooks.filter(b => b.testament === currentTestamentFilter);
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">
+        Nenhum livro encontrado para "${searchQuery}".
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(b => `
+    <button class="book-select-item" onclick="openChapterSelectorModal('${b.slug}')">
+      <div class="book-sel-top">
+        <span class="book-sel-abbrev">${b.abbrev}</span>
+        <span class="book-sel-chapters">${b.chapters} cap.</span>
+      </div>
+      <div class="book-sel-name">${b.name}</div>
+    </button>
+  `).join('');
+}
+
+// ==========================================================================
+// MODAL DE SELEÇÃO DE CAPÍTULOS (GRADE NUMÉRICA DIRETA)
+// ==========================================================================
+let selectedBookForChapters = null;
+
+function openChapterSelectorModal(bookSlug) {
+  closeModal('book-selector-modal');
+  const book = bibleService.getBook(bookSlug || bibleReader.currentBookSlug);
+  selectedBookForChapters = book;
+
+  const titleEl = document.getElementById('chapter-modal-book-title');
+  const countEl = document.getElementById('chapter-modal-book-count');
+  const gridEl = document.getElementById('chapter-selector-grid');
+
+  if (titleEl) titleEl.textContent = book.name;
+  if (countEl) countEl.textContent = `${book.chapters} capítulos`;
+
+  if (gridEl) {
+    let html = '';
+    for (let c = 1; c <= book.chapters; c++) {
+      const isCurrent = (book.slug === bibleReader.currentBookSlug && c === bibleReader.currentChapter);
+      const activeClass = isCurrent ? 'active' : '';
+      html += `
+        <button class="chap-num-btn ${activeClass}" onclick="selectChapterFromModal(${c})">
+          ${c}
+        </button>
+      `;
+    }
+    gridEl.innerHTML = html;
+  }
+
+  openModal('chapter-selector-modal');
+}
+
+function selectChapterFromModal(chapterNum) {
+  closeModal('chapter-selector-modal');
+  const slug = selectedBookForChapters ? selectedBookForChapters.slug : bibleReader.currentBookSlug;
+  window.location.hash = `/acf/${slug}/${chapterNum}`;
+}
+
+// ==========================================================================
+// MODAL DE OPÇÕES DE LEITURA (Aa)
+// ==========================================================================
+function openReadingOptionsModal() {
+  // Sincroniza controles com o estado atual
+  document.querySelectorAll('.view-mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === bibleReader.viewMode);
+  });
+  document.querySelectorAll('.font-family-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.family === bibleReader.fontFamily);
+  });
+  const fontLabel = document.getElementById('options-font-size-label');
+  if (fontLabel) fontLabel.textContent = `${bibleReader.fontSize}px`;
+
+  openModal('reading-options-modal');
+}
+
+// ==========================================================================
+// VERSÍCULO DO DIA & CONTINUAR LEITURA
+// ==========================================================================
+function initDailyVerse() {
+  const todayIndex = new Date().getDate() % DAILY_VERSES.length;
+  const verse = DAILY_VERSES[todayIndex];
+
+  const textEl = document.getElementById('daily-verse-text');
+  const refEl = document.getElementById('daily-verse-ref');
+
+  if (textEl) textEl.textContent = `"${verse.text}"`;
+  if (refEl) refEl.textContent = `— ${verse.reference} (${bibleService.getVersion()}) —`;
+
+  // Ouvir Versículo do Dia com TTS natural
+  const audioBtn = document.getElementById('daily-verse-audio-btn');
+  if (audioBtn) {
+    audioBtn.onclick = () => {
+      bibleSpeech.speak(`${verse.text}. ${verse.reference}.`, null, null);
+      showToast('Ouvindo Versículo do Dia 🔊');
+    };
+  }
+
+  // Copiar versículo
+  const copyBtn = document.getElementById('daily-verse-copy-btn');
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(`"${verse.text}"\n— ${verse.reference} (${bibleService.getVersion()})`).then(() => {
+        showToast("Versículo do Dia copiado!");
+      });
+    };
+  }
+
+  // Ler no contexto (vai direto para a passagem)
+  const contextBtn = document.getElementById('daily-verse-context-btn');
+  if (contextBtn) {
+    contextBtn.onclick = () => {
+      const book = bibleService.getBook(verse.bookId);
+      window.location.hash = `/acf/${book.slug}/${verse.chapter}:${verse.verse}`;
+    };
+  }
+
+  // Criar cartão do versículo do dia
+  const cardBtn = document.getElementById('daily-verse-card-btn');
+  if (cardBtn) {
+    cardBtn.onclick = () => {
+      const cardText = document.getElementById('card-generator-verse-text');
+      const cardRef = document.getElementById('card-generator-verse-ref');
+      if (cardText) cardText.textContent = `"${verse.text}"`;
+      if (cardRef) cardRef.textContent = `— ${verse.reference} (${bibleService.getVersion()}) —`;
+      openModal('verse-card-modal');
+    };
+  }
+}
+
+// ==========================================================================
+// PRATELEIRA COMPLETA DE LIVROS NA HOME (ESTRUTURA CANÔNICA)
+// ==========================================================================
+function initCanonicalBooksShelf() {
+  const atContainer = document.getElementById('home-at-books-grid');
+  const ntContainer = document.getElementById('home-nt-books-grid');
+
+  const allBooks = bibleService.getBooks();
+  const atBooks = allBooks.filter(b => b.testament === 'AT');
+  const ntBooks = allBooks.filter(b => b.testament === 'NT');
+
+  if (atContainer) {
+    atContainer.innerHTML = atBooks.map(b => `
+      <div class="canonical-book-card" onclick="openChapterSelectorModal('${b.slug}')">
+        <div class="book-card-abbrev">${b.abbrev}</div>
+        <div class="book-card-name">${b.name}</div>
+        <div class="book-card-meta">${b.chapters} cap. • <span class="group-tag">${b.group}</span></div>
+      </div>
+    `).join('');
+  }
+
+  if (ntContainer) {
+    ntContainer.innerHTML = ntBooks.map(b => `
+      <div class="canonical-book-card" onclick="openChapterSelectorModal('${b.slug}')">
+        <div class="book-card-abbrev">${b.abbrev}</div>
+        <div class="book-card-name">${b.name}</div>
+        <div class="book-card-meta">${b.chapters} cap. • <span class="group-tag">${b.group}</span></div>
+      </div>
+    `).join('');
+  }
+}
+
+// ==========================================================================
+// SEÇÃO DE ESTUDOS BÍBLICOS
 // ==========================================================================
 let currentCategoryFilter = 'all';
 
@@ -239,14 +504,6 @@ function openStudyReader(studyId) {
     </div>
   `;
 
-  // Anexa ouvintes de clique para todas as referências bíblicas clicáveis
-  view.querySelectorAll('.scripture-ref-badge').forEach(badge => {
-    badge.addEventListener('click', () => {
-      const ref = badge.getAttribute('data-ref');
-      previewScriptureReference(ref);
-    });
-  });
-
   appRouter.navigateTo('study-view');
 }
 
@@ -282,51 +539,6 @@ function handleCreateNewStudy(e) {
   closeModal('new-study-modal');
   showToast("Novo estudo bíblico publicado com sucesso! 📜");
   renderStudiesGrid();
-}
-
-// ==========================================================================
-// PREVIEW FLUTUANTE DE VERSÍCULOS
-// ==========================================================================
-function previewScriptureReference(refString) {
-  const modal = document.getElementById('verse-preview-modal');
-  const titleEl = document.getElementById('preview-modal-title');
-  const bodyEl = document.getElementById('preview-modal-content');
-
-  if (titleEl) titleEl.textContent = `Referência: ${refString}`;
-
-  // Procura se temos o versículo em nossa base
-  let foundText = "O Senhor revelou Sua graciosa vontade através da Sua eterna Palavra.";
-  
-  if (refString.includes('ROM 5:1')) {
-    foundText = "Sendo, pois, justificados pela fé, temos paz com Deus por nosso Senhor Jesus Cristo.";
-  } else if (refString.includes('ROM 3:23')) {
-    foundText = "Porque todos pecaram e destituídos estão da glória de Deus.";
-  } else if (refString.includes('EPH 2:8')) {
-    foundText = "Porque pela graça sois salvos, por meio da fé; e isso não vem de vós; é dom de Deus.";
-  } else if (refString.includes('ROM 8:1')) {
-    foundText = "Portanto, agora, nenhuma condenação há para os que estão em Cristo Jesus, que não andam segundo a carne, mas segundo o espírito.";
-  } else if (refString.includes('EPH 6:12')) {
-    foundText = "Porque não temos que lutar contra carne e sangue, mas, sim, contra os principados, contra as potestades, contra os príncipes das trevas deste século.";
-  } else if (refString.includes('MAT 6:6')) {
-    foundText = "Mas tu, quando orares, entra no teu aposento e, fechando a tua porta, ora a teu Pai, que vê o que está oculto; e teu Pai, que vê o que é oculto, te recompensará.";
-  } else if (refString.includes('MAT 5:3')) {
-    foundText = "Bem-aventurados os pobres de espírito, porque deles é o Reino dos céus.";
-  } else if (refString.includes('1TH 4:16')) {
-    foundText = "Porque o mesmo Senhor descerá do céu com alarido, e com voz de arcanjo, e com a trombeta de Deus; e os que morreram em Cristo ressuscitarão primeiro.";
-  }
-
-  if (bodyEl) {
-    bodyEl.innerHTML = `
-      <p style="font-family: 'Lora', serif; font-size: 1.25rem; line-height: 1.9; font-style: italic; color: var(--text-scripture); margin-bottom: 1.5rem;">
-        "${foundText}"
-      </p>
-      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
-        <button class="btn-primary" onclick="closeModal('verse-preview-modal')">Amém</button>
-      </div>
-    `;
-  }
-
-  openModal('verse-preview-modal');
 }
 
 // ==========================================================================
@@ -386,13 +598,18 @@ function renderReadingPlansView() {
 
 function togglePlanDayCheck(planId, day, totalItems) {
   const isDone = readingPlansManager.toggleDay(planId, day);
-  showToast(isDone ? `Dia ${day} concluído! Parabéns pela perseverança! 🕊️` : `Dia ${day} desmarcado.`);
+  showToast(isDone ? `Dia ${day} concluído! Parabéns! 🕊️` : `Dia ${day} desmarcado.`);
   renderReadingPlansView();
 }
 
-function jumpToBibleBook(bookId, chapter) {
-  bibleReader.loadChapter(bookId, chapter);
-  appRouter.navigateTo('bible');
+function jumpToBibleBook(bookIdOrSlug, chapter, verse = null) {
+  const book = bibleService.getBook(bookIdOrSlug);
+  if (!book) return;
+  if (verse) {
+    window.location.hash = `/acf/${book.slug}/${chapter}:${verse}`;
+  } else {
+    window.location.hash = `/acf/${book.slug}/${chapter}`;
+  }
 }
 
 // ==========================================================================
@@ -409,7 +626,7 @@ function renderNotesView() {
     container.innerHTML = `
       <div style="grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--text-muted);">
         <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">Você ainda não possui anotações registradas.</p>
-        <p style="font-size: 0.95rem;">Clique em qualquer versículo durante a leitura da Bíblia para destacar e adicionar anotações teológicas pessoais!</p>
+        <p style="font-size: 0.95rem;">Clique em qualquer versículo durante a leitura bíblica para destacar e registrar revelações e reflexões!</p>
         <button class="btn-primary" style="margin-top: 1.5rem;" onclick="appRouter.navigateTo('bible')">
           Ir para a Bíblia Sagrada
         </button>
@@ -420,25 +637,27 @@ function renderNotesView() {
 
   container.innerHTML = notesKeys.map(k => {
     const item = notesObj[k];
+    const text = typeof item === 'string' ? item : item.text;
+    const bookName = item.bookName || 'Escrituras';
+    const chapter = item.chapter || 1;
+    const verse = item.verse || 1;
+    const date = item.date || '';
+
     return `
       <div class="note-card">
         <div>
           <div class="note-verse-header">
-            <span class="note-verse-ref">${item.bookName} ${item.chapter}:${item.verse}</span>
-            <span style="font-size: 0.8rem; color: var(--text-muted);">${item.date}</span>
+            <span class="note-verse-ref">${bookName} ${chapter}:${verse}</span>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">${date}</span>
           </div>
-          <div class="note-verse-text">
-            "${item.verseText}"
-          </div>
-          <div class="note-body">
-            ${item.text}
-          </div>
+          ${item.verseText ? `<div class="note-verse-text">"${item.verseText}"</div>` : ''}
+          <div class="note-body">${text}</div>
         </div>
         <div class="note-footer">
-          <button class="read-study-btn" onclick="jumpToBibleBook('${item.bookId}', ${item.chapter})">
+          <button class="read-study-btn" onclick="jumpToBibleBook('${item.bookSlug || 'gn'}', ${chapter}, ${verse})">
             Abrir Capítulo →
           </button>
-          <button style="color: var(--text-muted);" onclick="deleteNoteEntry('${k}')" title="Excluir">
+          <button style="color: var(--text-muted); cursor: pointer;" onclick="deleteNoteEntry('${k}')" title="Excluir">
             🗑️ Excluir
           </button>
         </div>
@@ -512,115 +731,14 @@ function filterLexiconByLetter(letter, btn) {
 }
 
 // ==========================================================================
-// MODAL DE SELEÇÃO DE LIVROS DA BÍBLIA
-// ==========================================================================
-let currentTestamentFilter = 'AT';
-
-function openBookSelectorModal() {
-  renderBookSelectorGrid();
-  openModal('book-selector-modal');
-}
-
-function filterTestament(testament, btn) {
-  currentTestamentFilter = testament;
-  document.querySelectorAll('.book-tab-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderBookSelectorGrid();
-}
-
-function renderBookSelectorGrid() {
-  const container = document.getElementById('book-selector-grid');
-  if (!container) return;
-
-  const filtered = BIBLE_BOOKS.filter(b => b.testament === currentTestamentFilter);
-  container.innerHTML = filtered.map(b => `
-    <button class="book-select-item" onclick="selectBookFromModal('${b.id}')">
-      <div>${b.name}</div>
-      <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: normal;">${b.chapters} cap.</div>
-    </button>
-  `).join('');
-}
-
-function selectBookFromModal(bookId) {
-  closeModal('book-selector-modal');
-  bibleReader.loadChapter(bookId, 1);
-  appRouter.navigateTo('bible');
-}
-
-// ==========================================================================
-// VERSÍCULO DO DIA & CONTINUAR LEITURA
-// ==========================================================================
-function initDailyVerse() {
-  const todayIndex = new Date().getDate() % DAILY_VERSES.length;
-  const verse = DAILY_VERSES[todayIndex];
-
-  const textEl = document.getElementById('daily-verse-text');
-  const refEl = document.getElementById('daily-verse-ref');
-
-  if (textEl) textEl.textContent = verse.text;
-  if (refEl) refEl.textContent = `— ${verse.reference} (ARC) —`;
-
-  // Botão copiar versículo do dia
-  const copyBtn = document.getElementById('daily-verse-copy-btn');
-  if (copyBtn) {
-    copyBtn.onclick = () => {
-      navigator.clipboard.writeText(`"${verse.text}"\n— ${verse.reference} (ARC)`).then(() => {
-        showToast("Versículo do Dia copiado!");
-      });
-    };
-  }
-
-  // Botão ler no contexto
-  const contextBtn = document.getElementById('daily-verse-context-btn');
-  if (contextBtn) {
-    contextBtn.onclick = () => {
-      jumpToBibleBook(verse.bookId, verse.chapter);
-    };
-  }
-}
-
-function initQuickBooksGrid() {
-  const atContainer = document.getElementById('home-at-books-grid');
-  const ntContainer = document.getElementById('home-nt-books-grid');
-
-  if (atContainer) {
-    const at = BIBLE_BOOKS.filter(b => b.testament === 'AT').slice(0, 10);
-    atContainer.innerHTML = at.map(b => `
-      <div class="book-pill-card" onclick="jumpToBibleBook('${b.id}', 1)">
-        <span class="book-name">${b.name}</span>
-        <span class="book-meta">${b.chapters} capítulos</span>
-      </div>
-    `).join('') + `
-      <div class="book-pill-card" onclick="openBookSelectorModal()" style="border-style: dashed; justify-content: center; align-items: center; cursor: pointer;">
-        <span style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700;">Ver Todos (+29) →</span>
-      </div>
-    `;
-  }
-
-  if (ntContainer) {
-    const nt = BIBLE_BOOKS.filter(b => b.testament === 'NT').slice(0, 10);
-    ntContainer.innerHTML = nt.map(b => `
-      <div class="book-pill-card" onclick="jumpToBibleBook('${b.id}', 1)">
-        <span class="book-name">${b.name}</span>
-        <span class="book-meta">${b.chapters} capítulos</span>
-      </div>
-    `).join('') + `
-      <div class="book-pill-card" onclick="openBookSelectorModal()" style="border-style: dashed; justify-content: center; align-items: center; cursor: pointer;">
-        <span style="font-size: 0.85rem; color: var(--accent-gold); font-weight: 700;">Ver Todos (+17) →</span>
-      </div>
-    `;
-  }
-}
-
-// ==========================================================================
 // INICIALIZAÇÃO GERAL AO CARREGAR
 // ==========================================================================
 document.addEventListener('DOMContentLoaded', () => {
   appRouter = new AppRouter();
   initDailyVerse();
-  initQuickBooksGrid();
+  initCanonicalBooksShelf();
 
-  // Botão de Áudio Ambiente
+  // Botão de Áudio Ambiente (Web Audio API)
   const ambientBtn = document.getElementById('ambient-audio-toggle');
   if (ambientBtn) {
     ambientBtn.addEventListener('click', () => {
@@ -630,7 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Atalho de teclado Ctrl + K para pesquisa rápida
+  // Atalho de teclado Ctrl + K para Seletor de Livros
   window.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
       e.preventDefault();
